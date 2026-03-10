@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Malla De Lulú Nerda</title>
+
+<style>
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Nunito:wght@400;600;700&display=swap');
+
+:root{
+--rosa1:#f9c8dc;
+--rosa2:#f3a9c9;
+--rosa3:#ffe6f2;
+--texto:#6b4156;
+--gris:#9c7b8c;
+--verde:#eaf9e8;
+--verdeB:#9dd2a1;
+--bloq:#f7edf3;
+--bloqB:#dcc5d1;
+--sombra:0 12px 30px rgba(232,150,186,.18);
+--radius:20px;
+}
+
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:'Nunito',sans-serif;
+background:linear-gradient(180deg,#fff9fc,#fff1f7);
+color:var(--texto);
+}
+
+.page{
+padding:30px 20px 40px;
+max-width:1900px;
+margin:auto;
+}
+
+.hero{
+background:white;
+padding:30px;
+border-radius:30px;
+box-shadow:var(--sombra);
+margin-bottom:30px;
+text-align:center;
+}
+
+h1{
+margin:0 0 12px 0;
+font-family:'Playfair Display',serif;
+font-size:clamp(2rem,2.8vw,3rem);
+color:#c46a95;
+}
+
+.subtitle{
+margin:0;
+font-size:1rem;
+line-height:1.7;
+color:var(--gris);
+max-width:900px;
+margin:auto;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(10,minmax(240px,1fr));
+gap:18px;
+overflow-x:auto;
+}
+
+.semester{
+background:white;
+border-radius:26px;
+padding:16px;
+box-shadow:var(--sombra);
+position:relative;
+}
+
+.semester::before{
+content:"";
+position:absolute;
+top:0;
+left:0;
+right:0;
+height:8px;
+border-radius:26px 26px 0 0;
+background:linear-gradient(90deg,#f8bdd6,#ffddeb,#f7c6dc);
+}
+
+.semester h2{
+text-align:center;
+font-family:'Playfair Display',serif;
+font-size:1.1rem;
+margin:10px 0 15px;
+color:#b16289;
+}
+
+.subjects{
+display:grid;
+gap:12px;
+}
+
+.subject{
+background:white;
+border-radius:var(--radius);
+padding:14px;
+border:1px solid transparent;
+box-shadow:var(--sombra);
+cursor:pointer;
+position:relative;
+transition:.2s;
+}
+
+.subject:hover{
+transform:translateY(-2px);
+}
+
+.subject.approved{
+background:var(--verde);
+border-color:var(--verdeB);
+}
+
+.subject.locked{
+background:var(--bloq);
+border-color:var(--bloqB);
+cursor:not-allowed;
+opacity:.85;
+}
+
+.subject-title{
+font-weight:700;
+font-size:.95rem;
+padding-right:30px;
+margin:0 0 8px 0;
+}
+
+.meta{
+display:flex;
+justify-content:space-between;
+font-size:.8rem;
+color:var(--gris);
+}
+
+.badge{
+border-radius:999px;
+padding:4px 10px;
+font-weight:700;
+font-size:.75rem;
+}
+
+.available{background:#fff3f9;color:#b85c8c}
+.approvedBadge{background:#e8f9e6;color:#5c8e62}
+.lockedBadge{background:#f2e7ee;color:#907787}
+
+.check{
+position:absolute;
+top:10px;
+right:10px;
+width:26px;
+height:26px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.8rem;
+border:1px solid #efcade;
+background:#fff4fa;
+}
+
+.tooltip{
+position:fixed;
+background:#5c3648;
+color:white;
+padding:8px 12px;
+font-size:.8rem;
+border-radius:10px;
+pointer-events:none;
+opacity:0;
+transition:.1s;
+z-index:100;
+}
+
+.tooltip.show{opacity:1}
+
+.footer{
+margin-top:20px;
+text-align:center;
+font-size:.9rem;
+color:#8b6a7b;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<section class="hero">
+<h1>Malla De Lulú Nerda</h1>
+
+<p class="subtitle">
+Haz clic en cada materia para marcarla como aprobada. Las materias con prerrequisitos se desbloquean automáticamente cuando cumples lo necesario.
+</p>
+
+</section>
+
+<main class="grid" id="grid"></main>
+
+<p class="footer">
+Nota: Espero que le guste mucho a la niña nerda 🩷
+</p>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+
+const semesters=[
+{title:'Primer Semestre',subjects:[
+{id:'fund_admin',name:'Fundamentos De Administración'},
+{id:'fund_cont_fin',name:'Fundamentos De Contabilidad Financiera'},
+{id:'fund_econ',name:'Fundamentos De Economía'},
+{id:'hab_com',name:'Habilidades Comunicativas En Ciencias De Gestión'},
+{id:'calc_diff',name:'Cálculo Diferencial'}]},
+
+{title:'Segundo Semestre',subjects:[
+{id:'teo_org_1',name:'Teoría Organizacional I',prereqs:['fund_admin']},
+{id:'fund_cont_gestion',name:'Fundamentos De Contabilidad De Gestión',prereqs:['fund_cont_fin']},
+{id:'micro',name:'Microeconomía',prereqs:['calc_diff','fund_econ']},
+{id:'informatica',name:'Informática Aplicada Para La Gestión De Datos E Información'},
+{id:'prob_est',name:'Probabilidad Y Estadística Fundamental',prereqs:['calc_diff']}]},
+
+{title:'Tercer Semestre',subjects:[
+{id:'teo_org_2',name:'Teoría Organizacional II',prereqs:['teo_org_1']},
+{id:'opt_disc_1',name:'Optativa Disciplinar',alwaysUnlocked:true},
+{id:'macro',name:'Macroeconomía',prereqs:['fund_econ']},
+{id:'analitica_1',name:'Analítica De Negocios I',prereqs:['calc_diff','prob_est','informatica']},
+{id:'libre_1',name:'Libre Elección',alwaysUnlocked:true}]},
+
+{title:'Cuarto Semestre',subjects:[
+{id:'internacionalizacion',name:'Internacionalización De La Empresa',prereqs:['teo_org_2']},
+{id:'fund_finanzas',name:'Fundamentos De Finanzas',prereqs:['fund_cont_fin']},
+{id:'libre_2',name:'Libre Elección',alwaysUnlocked:true},
+{id:'opt_disc_2',name:'Optativa Disciplinar',alwaysUnlocked:true},
+{id:'derecho_comercial',name:'Derecho Comercial General Y Sociedades',prereqs:['teo_org_2']},
+{id:'ingles_4',name:'Inglés IV',alwaysUnlocked:true}]},
+
+{title:'Quinto Semestre',subjects:[
+{id:'derecho_laboral',name:'Derecho De Las Relaciones Laborales',prereqs:['teo_org_2']},
+{id:'fund_mercadeo',name:'Fundamentos De Mercadeo',prereqs:['analitica_1']},
+{id:'gestion_rh',name:'Gestión De Recursos Humanos',prereqs:['teo_org_2']},
+{id:'opt_fb_1',name:'Optativa De Formación Básica',alwaysUnlocked:true},
+{id:'operaciones_1',name:'Gestión De Las Operaciones I',prereqs:['fund_cont_gestion','prob_est']}]},
+
+{title:'Sexto Semestre',subjects:[
+{id:'emprendimiento',name:'Emprendimiento Enfocado En La Generación De Valor',prereqs:['fund_mercadeo','operaciones_1']},
+{id:'finanzas_av',name:'Finanzas Avanzadas',prereqs:['fund_finanzas']},
+{id:'comp_org',name:'Comportamiento Organizacional',prereqs:['gestion_rh','derecho_laboral']},
+{id:'sig',name:'Sistemas De Información Gerencial',prereqs:['fund_mercadeo','fund_finanzas','operaciones_1','gestion_rh']},
+{id:'operaciones_2',name:'Gestión De Las Operaciones II',prereqs:['operaciones_1','fund_mercadeo']}]},
+
+{title:'Séptimo Semestre',subjects:[
+{id:'estrategia',name:'Estrategia',prereqs:['internacionalizacion']},
+{id:'estrategia_merc',name:'Estrategia De Mercadeo',prereqs:['fund_mercadeo']},
+{id:'opt_fb_2',name:'Optativa De Formación Básica',alwaysUnlocked:true},
+{id:'app_emp',name:'Aplicaciones Empresariales',prereqs:['sig']},
+{id:'proyectos',name:'Diseño Gestión Y Evaluación De Proyectos',prereqs:['finanzas_av','operaciones_2']}]},
+
+{title:'Octavo Semestre',subjects:[
+{id:'libre_3',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_4',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_5',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_6',name:'Libre Elección',alwaysUnlocked:true},
+{id:'opt_disc_3',name:'Optativa Disciplinar',alwaysUnlocked:true}]},
+
+{title:'Noveno Semestre',subjects:[
+{id:'libre_7',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_8',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_9',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_10',name:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_11',name:'Libre Elección',alwaysUnlocked:true}]},
+
+{title:'Décimo Semestre',subjects:[
+{id:'trabajo_grado',name:'Trabajo De Grado',alwaysUnlocked:true}]}
+];
+
+const STORAGE_KEY='malla_lulu_nerda';
+const grid=document.getElementById('grid');
+const tooltip=document.getElementById('tooltip');
+
+const allSubjects=semesters.flatMap((s,i)=>s.subjects.map(sub=>({...sub,semesterIndex:i})));
+const subjectMap=Object.fromEntries(allSubjects.map(s=>[s.id,s]));
+
+let approved=new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"));
+
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...approved]));}
+
+function unlocked(s){
+if(s.alwaysUnlocked) return true;
+if(s.semesterIndex===0) return true;
+return (s.prereqs||[]).every(p=>approved.has(p));
+}
+
+function missing(s){
+return (s.prereqs||[]).filter(p=>!approved.has(p)).map(p=>subjectMap[p].name);
+}
+
+function toggle(id){
+let s=subjectMap[id];
+if(!approved.has(id)&&!unlocked(s))return;
+
+approved.has(id)?approved.delete(id):approved.add(id);
+
+save();
+render();
+}
+
+function card(s){
+
+let status=approved.has(s.id)?'approved':(unlocked(s)?'available':'locked');
+
+let el=document.createElement('div');
+el.className=`subject ${status==='approved'?'approved':''} ${status==='locked'?'locked':''}`;
+el.dataset.id=s.id;
+
+let badge=status==='approved'?'approvedBadge':(status==='available'?'available':'lockedBadge');
+
+el.innerHTML=`
+<div class="check">${status==='approved'?'✓':status==='locked'?'🔒':'○'}</div>
+<div class="subject-title">${s.name}</div>
+<div class="meta">
+<span>${s.prereqs?`Req: ${s.prereqs.length}`:'Sin Requisito'}</span>
+<span class="badge ${badge}">${status==='approved'?'Aprobada':status==='available'?'Disponible':'Bloqueada'}</span>
+</div>`;
+
+if(status==='locked'){
+el.dataset.tip="Falta Aprobar: "+missing(s).join(', ');
+
+el.addEventListener('mousemove',e=>{
+tooltip.textContent=el.dataset.tip;
+tooltip.classList.add('show');
+tooltip.style.left=e.pageX+15+'px';
+tooltip.style.top=e.pageY+15+'px';
+});
+
+el.addEventListener('mouseleave',()=>tooltip.classList.remove('show'));
+}
+
+el.onclick=()=>toggle(s.id);
+
+return el;
+}
+
+function render(){
+
+grid.innerHTML='';
+
+semesters.forEach(sem=>{
+
+let col=document.createElement('div');
+col.className='semester';
+
+let title=document.createElement('h2');
+title.textContent=sem.title;
+
+let wrap=document.createElement('div');
+wrap.className='subjects';
+
+sem.subjects.forEach(s=>wrap.appendChild(card(s)));
+
+col.appendChild(title);
+col.appendChild(wrap);
+
+grid.appendChild(col);
+
+});
+}
+
+render();
+
+</script>
+
+</body>
+</html>
