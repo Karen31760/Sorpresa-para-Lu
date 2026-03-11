@@ -16,6 +16,7 @@
 --rosa3:#ffe6f2;
 --texto:#6b4156;
 --gris:#9c7b8c;
+--gris2:#b291a2;
 --verde:#eaf9e8;
 --verdeB:#9dd2a1;
 --bloq:#f7edf3;
@@ -112,6 +113,7 @@ box-shadow:var(--sombra);
 cursor:pointer;
 position:relative;
 transition:.2s;
+min-height:128px;
 }
 
 .subject:hover{
@@ -133,8 +135,19 @@ opacity:.85;
 .subject-title{
 font-weight:700;
 font-size:.95rem;
-padding-right:30px;
-margin:0 0 8px 0;
+padding-right:72px;
+margin:0 0 6px 0;
+line-height:1.35;
+}
+
+.subject-category{
+font-size:.74rem;
+color:var(--gris2);
+text-align:center;
+margin:0 0 10px 0;
+line-height:1.3;
+font-weight:600;
+padding:0 6px;
 }
 
 .meta{
@@ -142,6 +155,7 @@ display:flex;
 justify-content:space-between;
 font-size:.8rem;
 color:var(--gris);
+margin-top:8px;
 }
 
 .badge{
@@ -170,6 +184,24 @@ border:1px solid #efcade;
 background:#fff4fa;
 }
 
+.credits{
+position:absolute;
+top:10px;
+right:42px;
+min-width:30px;
+height:26px;
+padding:0 8px;
+border-radius:999px;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:.74rem;
+font-weight:800;
+border:1px solid #efcade;
+background:#fff4fa;
+color:#b85c8c;
+}
+
 .tooltip{
 position:fixed;
 background:#5c3648;
@@ -181,6 +213,8 @@ pointer-events:none;
 opacity:0;
 transition:.1s;
 z-index:100;
+max-width:280px;
+line-height:1.4;
 }
 
 .tooltip.show{opacity:1}
@@ -222,71 +256,71 @@ Nota: Espero que le guste mucho a la niña nerda 🩷
 
 const semesters=[
 {title:'Primer Semestre',subjects:[
-{id:'fund_admin',name:'Fundamentos De Administración'},
-{id:'fund_cont_fin',name:'Fundamentos De Contabilidad Financiera'},
-{id:'fund_econ',name:'Fundamentos De Economía'},
-{id:'hab_com',name:'Habilidades Comunicativas En Ciencias De Gestión'},
-{id:'calc_diff',name:'Cálculo Diferencial'}]},
+{id:'fund_admin',name:'Fundamentos De Administración',credits:4,category:'Fundamentación Obligatoria'},
+{id:'fund_cont_fin',name:'Fundamentos De Contabilidad Financiera',credits:4,category:'Fundamentación Obligatoria'},
+{id:'fund_econ',name:'Fundamentos De Economía',credits:3,category:'Fundamentación Obligatoria'},
+{id:'hab_com',name:'Habilidades Comunicativas En Ciencias De Gestión',credits:3,category:'Fundamentación Obligatoria'},
+{id:'calc_diff',name:'Cálculo Diferencial',credits:4,category:'Fundamentación Obligatoria'}]},
 
 {title:'Segundo Semestre',subjects:[
-{id:'teo_org_1',name:'Teoría Organizacional I',prereqs:['fund_admin']},
-{id:'fund_cont_gestion',name:'Fundamentos De Contabilidad De Gestión',prereqs:['fund_cont_fin']},
-{id:'micro',name:'Microeconomía',prereqs:['calc_diff','fund_econ']},
-{id:'informatica',name:'Informática Aplicada Para La Gestión De Datos E Información'},
-{id:'prob_est',name:'Probabilidad Y Estadística Fundamental',prereqs:['calc_diff']}]},
+{id:'teo_org_1',name:'Teoría Organizacional I',credits:4,category:'Fundamentación Obligatoria',prereqs:['fund_admin']},
+{id:'fund_cont_gestion',name:'Fundamentos De Contabilidad De Gestión',credits:4,category:'Fundamentación Obligatoria',prereqs:['fund_cont_fin']},
+{id:'micro',name:'Microeconomía',credits:4,category:'Fundamentación Obligatoria',prereqs:['calc_diff','fund_econ']},
+{id:'informatica',name:'Informática Aplicada Para La Gestión De Datos E Información',credits:4,category:'Fundamentación Obligatoria'},
+{id:'prob_est',name:'Probabilidad Y Estadística Fundamental',credits:3,category:'Fundamentación Obligatoria',prereqs:['calc_diff']}]},
 
 {title:'Tercer Semestre',subjects:[
-{id:'teo_org_2',name:'Teoría Organizacional II',prereqs:['teo_org_1']},
-{id:'opt_disc_1',name:'Optativa Disciplinar',alwaysUnlocked:true},
-{id:'macro',name:'Macroeconomía',prereqs:['fund_econ']},
-{id:'analitica_1',name:'Analítica De Negocios I',prereqs:['calc_diff','prob_est','informatica']},
-{id:'libre_1',name:'Libre Elección',alwaysUnlocked:true}]},
+{id:'teo_org_2',name:'Teoría Organizacional II',credits:4,category:'Disciplinar Obligatoria',prereqs:['teo_org_1']},
+{id:'opt_disc_1',name:'Optativa Disciplinar',credits:3,category:'Disciplinar Optativa',alwaysUnlocked:true},
+{id:'macro',name:'Macroeconomía',credits:4,category:'Fundamentación Obligatoria',prereqs:['fund_econ']},
+{id:'analitica_1',name:'Analítica De Negocios I',credits:4,category:'Fundamentación Obligatoria',prereqs:['calc_diff','prob_est','informatica']},
+{id:'libre_1',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true}]},
 
 {title:'Cuarto Semestre',subjects:[
-{id:'internacionalizacion',name:'Internacionalización De La Empresa',prereqs:['teo_org_2']},
-{id:'fund_finanzas',name:'Fundamentos De Finanzas',prereqs:['fund_cont_fin']},
-{id:'libre_2',name:'Libre Elección',alwaysUnlocked:true},
-{id:'opt_disc_2',name:'Optativa Disciplinar',alwaysUnlocked:true},
-{id:'derecho_comercial',name:'Derecho Comercial General Y Sociedades',prereqs:['teo_org_2']},
-{id:'ingles_4',name:'Inglés IV',alwaysUnlocked:true}]},
+{id:'internacionalizacion',name:'Internacionalización De La Empresa',credits:4,category:'Disciplinar Obligatoria',prereqs:['teo_org_2']},
+{id:'fund_finanzas',name:'Fundamentos De Finanzas',credits:4,category:'Fundamentación Obligatoria',prereqs:['fund_cont_fin']},
+{id:'libre_2',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'opt_disc_2',name:'Optativa Disciplinar',credits:3,category:'Disciplinar Optativa',alwaysUnlocked:true},
+{id:'derecho_comercial',name:'Derecho Comercial General Y Sociedades',credits:3,category:'Disciplinar Obligatoria',prereqs:['teo_org_2']},
+{id:'ingles_4',name:'Inglés IV',credits:0,category:'Fundamentación Obligatoria',alwaysUnlocked:true}]},
 
 {title:'Quinto Semestre',subjects:[
-{id:'derecho_laboral',name:'Derecho De Las Relaciones Laborales',prereqs:['teo_org_2']},
-{id:'fund_mercadeo',name:'Fundamentos De Mercadeo',prereqs:['analitica_1']},
-{id:'gestion_rh',name:'Gestión De Recursos Humanos',prereqs:['teo_org_2']},
-{id:'opt_fb_1',name:'Optativa De Formación Básica',alwaysUnlocked:true},
-{id:'operaciones_1',name:'Gestión De Las Operaciones I',prereqs:['fund_cont_gestion','prob_est']}]},
+{id:'derecho_laboral',name:'Derecho De Las Relaciones Laborales',credits:3,category:'Disciplinar Obligatoria',prereqs:['teo_org_2']},
+{id:'fund_mercadeo',name:'Fundamentos De Mercadeo',credits:4,category:'Disciplinar Obligatoria',prereqs:['analitica_1']},
+{id:'gestion_rh',name:'Gestión De Recursos Humanos',credits:4,category:'Disciplinar Obligatoria',prereqs:['teo_org_2']},
+{id:'opt_fb_1',name:'Optativa De Formación Básica',credits:4,category:'Fundamentación Optativa',alwaysUnlocked:true},
+{id:'operaciones_1',name:'Gestión De Las Operaciones I',credits:4,category:'Disciplinar Obligatoria',prereqs:['fund_cont_gestion','prob_est']}]},
 
 {title:'Sexto Semestre',subjects:[
-{id:'emprendimiento',name:'Emprendimiento Enfocado En La Generación De Valor',prereqs:['fund_mercadeo','operaciones_1']},
-{id:'finanzas_av',name:'Finanzas Avanzadas',prereqs:['fund_finanzas']},
-{id:'comp_org',name:'Comportamiento Organizacional',prereqs:['gestion_rh','derecho_laboral']},
-{id:'sig',name:'Sistemas De Información Gerencial',prereqs:['fund_mercadeo','fund_finanzas','operaciones_1','gestion_rh']},
-{id:'operaciones_2',name:'Gestión De Las Operaciones II',prereqs:['operaciones_1','fund_mercadeo']}]},
+{id:'emprendimiento',name:'Emprendimiento Enfocado En La Generación De Valor',credits:4,category:'Disciplinar Obligatoria',prereqs:['fund_mercadeo','operaciones_1']},
+{id:'finanzas_av',name:'Finanzas Avanzadas',credits:4,category:'Disciplinar Obligatoria',prereqs:['fund_finanzas']},
+{id:'comp_org',name:'Comportamiento Organizacional',credits:3,category:'Disciplinar Obligatoria',prereqs:['gestion_rh','derecho_laboral']},
+{id:'sig',name:'Sistemas De Información Gerencial',credits:4,category:'Disciplinar Obligatoria',prereqs:['fund_mercadeo','fund_finanzas','operaciones_1','gestion_rh']},
+{id:'operaciones_2',name:'Gestión De Las Operaciones II',credits:3,category:'Disciplinar Obligatoria',prereqs:['operaciones_1','fund_mercadeo']}]},
 
 {title:'Séptimo Semestre',subjects:[
-{id:'estrategia',name:'Estrategia',prereqs:['internacionalizacion']},
-{id:'estrategia_merc',name:'Estrategia De Mercadeo',prereqs:['fund_mercadeo']},
-{id:'opt_fb_2',name:'Optativa De Formación Básica',alwaysUnlocked:true},
-{id:'app_emp',name:'Aplicaciones Empresariales',prereqs:['sig']},
-{id:'proyectos',name:'Diseño Gestión Y Evaluación De Proyectos',prereqs:['finanzas_av','operaciones_2']}]},
+{id:'estrategia',name:'Estrategia',credits:4,category:'Disciplinar Obligatoria',prereqs:['internacionalizacion']},
+{id:'estrategia_merc',name:'Estrategia De Mercadeo',credits:3,category:'Disciplinar Obligatoria',prereqs:['fund_mercadeo']},
+{id:'opt_fb_2',name:'Optativa De Formación Básica',credits:4,category:'Fundamentación Optativa',alwaysUnlocked:true},
+{id:'app_emp',name:'Aplicaciones Empresariales',credits:4,category:'Disciplinar Obligatoria',prereqs:['sig']},
+{id:'proyectos',name:'Diseño Gestión Y Evaluación De Proyectos',credits:4,category:'Disciplinar Obligatoria',prereqs:['finanzas_av','operaciones_2']}]},
 
 {title:'Octavo Semestre',subjects:[
-{id:'libre_3',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_4',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_5',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_6',name:'Libre Elección',alwaysUnlocked:true},
-{id:'opt_disc_3',name:'Optativa Disciplinar',alwaysUnlocked:true}]},
+{id:'libre_3',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_4',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_5',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_6',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'opt_disc_3',name:'Optativa Disciplinar',credits:3,category:'Disciplinar Optativa',alwaysUnlocked:true}]},
 
 {title:'Noveno Semestre',subjects:[
-{id:'libre_7',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_8',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_9',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_10',name:'Libre Elección',alwaysUnlocked:true},
-{id:'libre_11',name:'Libre Elección',alwaysUnlocked:true}]},
+{id:'libre_7',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_8',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_9',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_10',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true},
+{id:'libre_11',name:'Libre Elección',credits:3,category:'Libre Elección',alwaysUnlocked:true}]},
 
 {title:'Décimo Semestre',subjects:[
-{id:'trabajo_grado',name:'Trabajo De Grado',alwaysUnlocked:true}]}
+{id:'trabajo_grado',name:'Trabajo De Grado',credits:6,category:'Trabajo De Grado',alwaysUnlocked:true}]}
 ];
 
 const STORAGE_KEY='malla_lulu_nerda';
@@ -295,10 +329,20 @@ const tooltip=document.getElementById('tooltip');
 
 const allSubjects=semesters.flatMap((s,i)=>s.subjects.map(sub=>({...sub,semesterIndex:i})));
 const subjectMap=Object.fromEntries(allSubjects.map(s=>[s.id,s]));
+const dependents={};
+
+allSubjects.forEach(s=>{
+(s.prereqs||[]).forEach(p=>{
+if(!dependents[p]) dependents[p]=[];
+dependents[p].push(s.id);
+});
+});
 
 let approved=new Set(JSON.parse(localStorage.getItem(STORAGE_KEY)||"[]"));
 
-function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify([...approved]));}
+function save(){
+localStorage.setItem(STORAGE_KEY,JSON.stringify([...approved]));
+}
 
 function unlocked(s){
 if(s.alwaysUnlocked) return true;
@@ -310,74 +354,83 @@ function missing(s){
 return (s.prereqs||[]).filter(p=>!approved.has(p)).map(p=>subjectMap[p].name);
 }
 
-function toggle(id){
-let s=subjectMap[id];
-if(!approved.has(id)&&!unlocked(s))return;
+function getDescendantsToClear(startId, visited=new Set()){
+const next=dependents[startId]||[];
+for(const depId of next){
+if(visited.has(depId)) continue;
+if(approved.has(depId)){
+visited.add(depId);
+getDescendantsToClear(depId, visited);
+}
+}
+return visited;
+}
 
-approved.has(id)?approved.delete(id):approved.add(id);
+function toggle(id){
+const s=subjectMap[id];
+if(!approved.has(id) && !unlocked(s)) return;
+
+if(approved.has(id)){
+approved.delete(id);
+const descendants=[...getDescendantsToClear(id)];
+descendants.forEach(depId=>approved.delete(depId));
+}else{
+approved.add(id);
+}
 
 save();
 render();
 }
 
 function card(s){
-
-let status=approved.has(s.id)?'approved':(unlocked(s)?'available':'locked');
-
-let el=document.createElement('div');
+const status=approved.has(s.id)?'approved':(unlocked(s)?'available':'locked');
+const el=document.createElement('div');
 el.className=`subject ${status==='approved'?'approved':''} ${status==='locked'?'locked':''}`;
 el.dataset.id=s.id;
 
-let badge=status==='approved'?'approvedBadge':(status==='available'?'available':'lockedBadge');
+const badge=status==='approved'?'approvedBadge':(status==='available'?'available':'lockedBadge');
 
 el.innerHTML=`
+<div class="credits">${s.credits ?? ''}</div>
 <div class="check">${status==='approved'?'✓':status==='locked'?'🔒':'○'}</div>
 <div class="subject-title">${s.name}</div>
+<div class="subject-category">${s.category || ''}</div>
 <div class="meta">
-<span>${s.prereqs?`Req: ${s.prereqs.length}`:'Sin Requisito'}</span>
+<span>${s.prereqs ? `Req: ${s.prereqs.length}` : 'Sin Requisito'}</span>
 <span class="badge ${badge}">${status==='approved'?'Aprobada':status==='available'?'Disponible':'Bloqueada'}</span>
 </div>`;
 
 if(status==='locked'){
-el.dataset.tip="Falta Aprobar: "+missing(s).join(', ');
-
+el.dataset.tip='Falta Aprobar: '+missing(s).join(', ');
 el.addEventListener('mousemove',e=>{
 tooltip.textContent=el.dataset.tip;
 tooltip.classList.add('show');
 tooltip.style.left=e.pageX+15+'px';
 tooltip.style.top=e.pageY+15+'px';
 });
-
 el.addEventListener('mouseleave',()=>tooltip.classList.remove('show'));
 }
 
 el.onclick=()=>toggle(s.id);
-
 return el;
 }
 
 function render(){
-
 grid.innerHTML='';
-
 semesters.forEach(sem=>{
-
-let col=document.createElement('div');
+const col=document.createElement('div');
 col.className='semester';
 
-let title=document.createElement('h2');
+const title=document.createElement('h2');
 title.textContent=sem.title;
 
-let wrap=document.createElement('div');
+const wrap=document.createElement('div');
 wrap.className='subjects';
-
 sem.subjects.forEach(s=>wrap.appendChild(card(s)));
 
 col.appendChild(title);
 col.appendChild(wrap);
-
 grid.appendChild(col);
-
 });
 }
 
